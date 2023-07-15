@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package BizServer;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package="final_project_backend/proto";
+
+message SignUpUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message SignUpUserResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message LoginUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginUserResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message AddCreditRequest {
+  string username = 1;
+  int32 credit = 2;
+}
+
+message AddCreditResponse {
+  string message = 1;
+  int32 credit = 2;
+}
+
+message UnavailableDatesRequest {
+  int32 roomId = 1;
+}
+
+message UnavailableDatesResponse {
+  repeated int32 dates = 1;
+}
+
+service UsersService {
+  rpc SignUpUser(SignUpUserRequest) returns (SignUpUserResponse) {}
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse) {}
+  rpc AddCredit(AddCreditRequest) returns (AddCreditResponse) {}
+  rpc UnavailableDates(UnavailableDatesRequest) returns (UnavailableDatesResponse) {}
+}
+
+//message ReserveRequest {
+//  int32 roomId = 1;
+//  repeated g
+//}
+//
+//message ReserveResponse {
+//  bool success = 1;
+//  string message = 2;
+//}

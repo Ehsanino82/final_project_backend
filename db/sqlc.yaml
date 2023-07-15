@@ -1,0 +1,7 @@
+version: "1"
+packages:
+    - name: "database"
+      path: "../internal/pkg/database"
+      schema: "migration"
+      queries: "queries"
+      emit_interface: true
