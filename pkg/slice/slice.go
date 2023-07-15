@@ -72,12 +72,18 @@ func Difference[T comparable](first, second []T) []T {
 	return result
 }
 
-func Contains[T comparable](list []T, target T) bool {
-	for id := range list {
-		if list[id] == target {
-			return true
+func Unique[T comparable](slice []T) []T {
+	var uniqArr []T
+
+	objToExits := make(map[T]struct{})
+
+	for _, item := range slice {
+		_, hasItem := objToExits[item]
+		if !hasItem {
+			uniqArr = append(uniqArr, item)
+			objToExits[item] = struct{}{}
 		}
 	}
 
-	return false
+	return uniqArr
 }

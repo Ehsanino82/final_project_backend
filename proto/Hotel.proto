@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package BizServer;
 
-import "google/protobuf/timestamp.proto";
-
 option go_package="final_project_backend/proto";
 
 message SignUpUserRequest {

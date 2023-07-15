@@ -11,6 +11,7 @@ import (
 type Querier interface {
 	CreatePerson(ctx context.Context, arg CreatePersonParams) (Person, error)
 	GetPersonByUsername(ctx context.Context, username string) (Person, error)
+	GetRoomsReservedDates(ctx context.Context, roomID int32) ([][]int32, error)
 	UpdateCredit(ctx context.Context, arg UpdateCreditParams) error
 }
 

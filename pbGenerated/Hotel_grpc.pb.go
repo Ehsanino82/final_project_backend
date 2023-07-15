@@ -25,6 +25,7 @@ type UsersServiceClient interface {
 	SignUpUser(ctx context.Context, in *SignUpUserRequest, opts ...grpc.CallOption) (*SignUpUserResponse, error)
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	AddCredit(ctx context.Context, in *AddCreditRequest, opts ...grpc.CallOption) (*AddCreditResponse, error)
+	UnavailableDates(ctx context.Context, in *UnavailableDatesRequest, opts ...grpc.CallOption) (*UnavailableDatesResponse, error)
 }
 
 type usersServiceClient struct {
@@ -62,6 +63,15 @@ func (c *usersServiceClient) AddCredit(ctx context.Context, in *AddCreditRequest
 	return out, nil
 }
 
+func (c *usersServiceClient) UnavailableDates(ctx context.Context, in *UnavailableDatesRequest, opts ...grpc.CallOption) (*UnavailableDatesResponse, error) {
+	out := new(UnavailableDatesResponse)
+	err := c.cc.Invoke(ctx, "/BizServer.UsersService/UnavailableDates", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsersServiceServer is the server API for UsersService service.
 // All implementations must embed UnimplementedUsersServiceServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type UsersServiceServer interface {
 	SignUpUser(context.Context, *SignUpUserRequest) (*SignUpUserResponse, error)
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	AddCredit(context.Context, *AddCreditRequest) (*AddCreditResponse, error)
+	UnavailableDates(context.Context, *UnavailableDatesRequest) (*UnavailableDatesResponse, error)
 	mustEmbedUnimplementedUsersServiceServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedUsersServiceServer) LoginUser(context.Context, *LoginUserRequ
 }
 func (UnimplementedUsersServiceServer) AddCredit(context.Context, *AddCreditRequest) (*AddCreditResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCredit not implemented")
+}
+func (UnimplementedUsersServiceServer) UnavailableDates(context.Context, *UnavailableDatesRequest) (*UnavailableDatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnavailableDates not implemented")
 }
 func (UnimplementedUsersServiceServer) mustEmbedUnimplementedUsersServiceServer() {}
 
@@ -152,6 +166,24 @@ func _UsersService_AddCredit_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UsersService_UnavailableDates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnavailableDatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).UnavailableDates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/BizServer.UsersService/UnavailableDates",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).UnavailableDates(ctx, req.(*UnavailableDatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UsersService_ServiceDesc is the grpc.ServiceDesc for UsersService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddCredit",
 			Handler:    _UsersService_AddCredit_Handler,
+		},
+		{
+			MethodName: "UnavailableDates",
+			Handler:    _UsersService_UnavailableDates_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

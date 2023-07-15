@@ -82,9 +82,76 @@ func signUp(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, response)
 }
 
+func addCredit(c *gin.Context) {
+	flag.Parse()
+	var req pb.AddCreditRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "invalid body request",
+		})
+		return
+	}
+
+	conn, err := grpc.Dial(*addrHotel, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+	client := pb.NewUsersServiceClient(conn)
+
+	resp, err := client.AddCredit(c, &req)
+	if err != nil {
+		log.Printf("could not process request: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var response = pb.AddCreditResponse{
+		Message: resp.Message,
+		Credit:  resp.Credit,
+	}
+	c.IndentedJSON(http.StatusOK, response)
+}
+
+func unavailableDates(c *gin.Context) {
+	flag.Parse()
+	var req pb.UnavailableDatesRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "invalid body request",
+		})
+		return
+	}
+
+	conn, err := grpc.Dial(*addrHotel, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+	client := pb.NewUsersServiceClient(conn)
+
+	resp, err := client.UnavailableDates(c, &req)
+	if err != nil {
+		log.Printf("could not process request: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	var response = pb.UnavailableDatesResponse{
+		Dates: resp.Dates,
+	}
+	c.IndentedJSON(http.StatusOK, response)
+}
+
 func main() {
 	router := gin.Default()
 	router.POST("/sign-up", signUp)
 	router.POST("/login", login)
+	router.POST("/add-credit", addCredit)
+	router.POST("/unavailable-dates", unavailableDates)
 	router.Run("localhost:8000")
 }

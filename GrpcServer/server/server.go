@@ -6,6 +6,7 @@ import (
 	"final_project_backend/config"
 	"final_project_backend/internal/pkg/database"
 	pb "final_project_backend/pbGenerated"
+	"final_project_backend/pkg/slice"
 	"flag"
 	"fmt"
 	"github.com/lib/pq"
@@ -74,6 +75,24 @@ func (s *server) AddCredit(ctx context.Context, req *pb.AddCreditRequest) (*pb.A
 	}
 
 	return &pb.AddCreditResponse{Credit: totalCredit, Message: "add credit successfully"}, nil
+}
+
+func (s *server) UnavailableDates(ctx context.Context, req *pb.UnavailableDatesRequest) (*pb.UnavailableDatesResponse, error) {
+	roomId := req.RoomId
+
+	reservations, err := s.db.GetRoomsReservedDates(ctx, roomId)
+	if err != nil {
+		return nil, fmt.Errorf("get person %w", err)
+	}
+
+	var reservedDates []int32
+	for _, reservation := range reservations {
+		reservedDates = append(reservedDates, reservation...)
+	}
+
+	reservedDates = slice.Unique(reservedDates)
+
+	return &pb.UnavailableDatesResponse{Dates: reservedDates}, nil
 }
 
 func main() {
